@@ -129,8 +129,9 @@ dmypy.json
 .pyre/ 
 
 # hide some unrelated items
-fakenews/
+
 contract/
-data/
+data/METU/
+data/LogosInTheWild-V2/
 resources/
 logohunter/
