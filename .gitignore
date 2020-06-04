@@ -126,10 +126,11 @@ venv.bak/
 dmypy.json
 
 # Pyre type checker
-.pyre/
+.pyre/ 
 
 # hide some unrelated items
 fakenews/
 contract/
-data/raw
+data/
 resources/
+logohunter/
