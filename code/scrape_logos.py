@@ -20,7 +20,7 @@ def fetch_url(url_file):
     if os.path.exists(file_out):
         return True
     try:
-        img_data = requests.get(url, stream=True, timeout=80).content
+        img_data = requests.get(url, stream=True, timeout=120).content
         with open(file_out, 'wb') as handler:
             handler.write(img_data)
         return True

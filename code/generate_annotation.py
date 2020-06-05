@@ -90,11 +90,11 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process image annotation from VOC style to keras-yolo3 style.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-img_path', type=str, default='../data/LogosInTheWild-v2/data_cleaned/voc_format',
+    parser.add_argument('-img_path', type=str, default='data/LogosInTheWild-v2/clean_data/voc_format',
                         help='path to directory containing images and xml annotations')
     parser.add_argument('-out_name', type=str, default='data',
                         help='name template for output text files (to be appended: _test.txt, _train.txt)')
-    parser.add_argument('-classes_names', type=str, default='../data/LogosInTheWild-v2/data_cleaned/brands.txt',
+    parser.add_argument('-classes_names', type=str, default='data/LogosInTheWild-v2/clean_data/brands.txt',
                         help='path to txt file listing all possible object classes')
     parser.add_argument('-train_test_split', type=float, default = 0.3,
                         help='fraction of dataset set apart for test')
