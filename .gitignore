@@ -133,5 +133,7 @@ dmypy.json
 contract/
 data/METU/
 data/LogosInTheWild-V2/
+data/litw_annotations/
+data/0samples/
+code/yolo_v4/
 resources/
-logohunter/
