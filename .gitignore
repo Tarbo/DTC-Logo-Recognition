@@ -131,9 +131,10 @@ dmypy.json
 # hide some unrelated items
 
 contract/
-data/METU/
 data/LogosInTheWild-V2/
 data/litw_annotations/
 data/0samples/
+data/products/
 code/yolo_v4/
+data/products_url.csv
 resources/

@@ -3,11 +3,11 @@ import os
 import argparse
 import numpy as np
 import time
-from flask import Flask, request, Response, jsonify, render_template
-import jsonpickle
+from flask import Flask, request, Response, render_template, send_file
 import base64
 from io import BytesIO, StringIO, TextIOWrapper
 import json
+from urllib.parse import quote
 from PIL import Image
 
 # lets set default values for our agrs
@@ -40,7 +40,7 @@ def detector(frame, args=args):
     """perform the detection"""
     logo_detected = False
     net = cv.dnn_DetectionModel(args.config_file, args.weight_file)
-    net.setInputSize(640, 640)
+    net.setInputSize(608, 608)
     net.setInputScale(1.0 / 255)
     net.setInputSwapRB(True)
 
@@ -75,9 +75,13 @@ def detector(frame, args=args):
     #cv.imshow('Image', frame)
     # cv.waitKey()
 # lets initialize our flask app
+UPLOAD_FOLDER = 'static/assets/img'
 app = Flask(__name__)
+app.secret_key = "tarbo"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-# route http posts to this method
+
 @app.route('/detect', methods=['POST', 'GET'])
 def detect():
     # load the input image
@@ -88,19 +92,21 @@ def detect():
     image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
     print(f'>>> Image received! Sending to Yolo for detection')
     pred_img, decision = detector(image)
+    #file_name = 'predictions.png'
+    #cv.imwrite(file_name, pred_img)
     image = cv.cvtColor(pred_img, cv.COLOR_BGR2RGB)
-    #file_name = os.path.join(app.config['UPLOAD_FOLDER'],'predictions.jpg')
-    #file_name = 'predictions.jpg'
     np_img = Image.fromarray(image)
     img_encoded = img_to_byte_arr(np_img)
     print(f'>>> Sending prediction results back')
-    return Response(response=img_encoded,status=200,mimetype='image/jpeg')
+    #return Response(response=img_encoded,status=200,mimetype='image/jpeg')
+    result = str(base64.b64encode(img_encoded))[2:-1]
     #pred_img=base64(img_encoded).decode("utf-8")
-    #return render_template("result.html", pred_image=pred_img)
+    return render_template("result.html", pred_image=quote(result.rstrip('\n')))
+    #return send_file(BytesIO(img_encoded),mimetype='image/jpeg')
 
 
-@app.route('/index')
-def show_index():
+@app.route('/')
+def home_page():
     return render_template("upload.html")
 
 

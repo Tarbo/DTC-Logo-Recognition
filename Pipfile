@@ -9,6 +9,8 @@ verify_ssl = true
 requests = "*"
 flask = "*"
 jsonpickle = "*"
+flask-images = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"
