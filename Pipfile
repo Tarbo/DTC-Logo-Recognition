@@ -11,6 +11,8 @@ flask = "*"
 jsonpickle = "*"
 flask-images = "*"
 pandas = "*"
+tensorflow = "*"
+sklearn = "*"
 
 [requires]
 python_version = "3.8"

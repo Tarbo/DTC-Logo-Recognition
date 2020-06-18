@@ -1,12 +1,12 @@
 import cv2 as cv
 import os
+import feature_extractor
 import argparse
 import numpy as np
 import time
 from flask import Flask, request, Response, render_template, send_file
 import base64
-from io import BytesIO, StringIO, TextIOWrapper
-import json
+from io import BytesIO
 from urllib.parse import quote
 from PIL import Image
 
@@ -92,22 +92,18 @@ def detect():
     image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
     print(f'>>> Image received! Sending to Yolo for detection')
     pred_img, decision = detector(image)
-    #file_name = 'predictions.png'
-    #cv.imwrite(file_name, pred_img)
     image = cv.cvtColor(pred_img, cv.COLOR_BGR2RGB)
     np_img = Image.fromarray(image)
     img_encoded = img_to_byte_arr(np_img)
     print(f'>>> Sending prediction results back')
     #return Response(response=img_encoded,status=200,mimetype='image/jpeg')
     result = str(base64.b64encode(img_encoded))[2:-1]
-    #pred_img=base64(img_encoded).decode("utf-8")
     return render_template("result.html", pred_image=quote(result.rstrip('\n')))
-    #return send_file(BytesIO(img_encoded),mimetype='image/jpeg')
 
 
 @app.route('/')
 def home_page():
-    return render_template("upload.html")
+    return render_template("index.html")
 
 
 if __name__ == "__main__":
