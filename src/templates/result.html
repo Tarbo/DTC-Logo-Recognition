@@ -58,7 +58,7 @@
 
    <main role="main">
 
-      <div id="myCarousel" class="carousel slide" data-ride="carousel" style="background-color: dimgrey;" >
+      <div id="myCarousel" class="carousel slide" data-ride="carousel" style="background-color: dimgrey;">
          <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
             <li data-target="#myCarousel" data-slide-to="1"></li>
@@ -218,7 +218,7 @@
                <h1 class="cover-heading display-1" style="font-family: 'Lucida Handwriting';font-style: italic;">
                   Logo IDing</h1>
                <p></p>
-               <h2 class="font-italic">Product Tracking as a Service</h2>
+               <h2 class="font-italic">Sifting through Pixels for Brand Identification</h2>
                <p></p>
                <p></p>
                <h4>Test the service by selecting an image to be tested</h4>
@@ -230,9 +230,11 @@
                </form>
             </div>
 
-            <div class="row container-fluid justify-content-center">
-               <h3><span style="font-family: 'Lucida Handwriting';font-style: italic;">Logo IDing</span> Result</h3>
-               <img src="data:image/png;base64,{{ pred_image }}" alt="Predicted logos">
+            <div class="col-md container-fluid">
+               <div class="row justify-content-center">
+                  <h3><span style="font-family: 'Lucida Handwriting';font-style: italic;">Logo IDing</span> Results</h3>
+                  <img src="data:image/png;base64,{{ pred_image }}" alt="Predicted logos">
+               </div>
             </div>
          </main>
       </div><!-- /col-->

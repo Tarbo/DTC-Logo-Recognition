@@ -1,6 +1,7 @@
 import cv2 as cv
 import os
-import feature_extractor
+import shutil
+#import feature_extractor
 import argparse
 import numpy as np
 import time
@@ -14,11 +15,11 @@ from PIL import Image
 parser = argparse.ArgumentParser(
     prog="a function to detect logos using trained yolov4")
 parser.add_argument('--weight_file', type=str, default=os.path.abspath(os.path.join(os.getcwd(),
-                                                                                    "code/yolo_v4/custom-yolov4-detector_best_1.weights")), help='provide a path to the weight file')
+                                                                                    "src/yolo_v4/custom-yolov4-detector_best_1.weights")), help='provide a path to the weight file')
 parser.add_argument('--config_file', type=str, default=os.path.abspath(os.path.join(os.getcwd(),
-                                                                                    "code/yolo_v4/custom-yolov4-detector.cfg")), help='provide a path to the configuration file')
+                                                                                    "src/yolo_v4/custom-yolov4-detector.cfg")), help='provide a path to the configuration file')
 parser.add_argument('--obj_names', type=str, default=os.path.abspath(os.path.join(
-    os.getcwd(), "code/yolo_v4/obj_names")), help='provide a path to the class names file')
+    os.getcwd(), "src/yolo_v4/obj_names")), help='provide a path to the class names file')
 # parser.add_argument('--image', type=str, default=os.path.abspath(os.path.join(
 #     os.getcwd(), "data/test/adidas_2.jpg")), help='provide a test image file')
 parser.add_argument('--confthresh', type=float, default=0.30,
@@ -36,6 +37,35 @@ def img_to_byte_arr(image: Image):
     return img_byte_arr
 
 
+def save_boxes(image, boxes):
+    """ Save the bounding boxes ROI as separate images for feature extraction"""
+    count = 0
+    print(f'>>> Image Shape: {image.shape}\nBox Values: {boxes}')
+    folder_name = os.path.join(
+        os.getcwd(), 'src/static/assets/img/saved_boxes')
+    if os.path.exists(folder_name):
+        # we dont want to analyze bounding boxes for previous images
+        shutil.rmtree(folder_name)
+    os.makedirs(folder_name)
+    for box in boxes:
+        left, top, width, height = box
+        xmin = int(left)
+        xmax = int(left + width)
+        ymin = int(top)
+        ymax = int(top+height)  # inverted bounding box
+        # write boxes as separate image file
+        name = 'logo_' + str(count) + '_.jpg'
+        img_name = os.path.join(folder_name, name)
+        roi = image[ymin:ymax, xmin:xmax]
+        cv.imwrite(img_name, roi)
+        #print(f'xmin: {xmin}\txmax: {xmax}\tymin: {ymin}\tymax: {ymax} ')
+        # cv.imshow('logo',roi)
+        # cv.waitKey()
+        count += 1
+        #print(f'>>> Logo: {img_name} successfully written')
+    return
+
+
 def detector(frame, args=args):
     """perform the detection"""
     logo_detected = False
@@ -45,7 +75,7 @@ def detector(frame, args=args):
     net.setInputSwapRB(True)
 
     #frame = cv.imread(args.image)
-
+    image_arr = frame
     with open(args.obj_names, 'rt') as f:
         names = f.read().rstrip('\n').split('\n')
     start = time.time()
@@ -68,8 +98,7 @@ def detector(frame, args=args):
                                                          labelSize[0], top + baseLine), (255, 255, 255), cv.FILLED)
         cv.putText(frame, label, (left, top),
                    cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
-
-    return frame, logo_detected
+    return frame, logo_detected, boxes
 
 
     #cv.imshow('Image', frame)
@@ -89,14 +118,24 @@ def detect():
     img = Image.open(BytesIO(img))
     npimg = np.array(img)
     image = npimg.copy()
+    image2 = npimg.copy()
     image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+    image2 = cv.cvtColor(image2, cv.COLOR_BGR2RGB)
     print(f'>>> Image received! Sending to Yolo for detection')
-    pred_img, decision = detector(image)
+    pred_img, decision, boxes = detector(image)
+    # ife we detected boxes, perform box cropping and feature extraction
+    if decision:
+        save_boxes(image2, boxes)
+    # print(f'>>> Handing over to feature extraction and classification')
+    # if decision:
+    #     result = feature_extractor.match_brand(image)
+    # else:
+    #     result['Predicted brand'] = 'No matching Brand found'
     image = cv.cvtColor(pred_img, cv.COLOR_BGR2RGB)
     np_img = Image.fromarray(image)
     img_encoded = img_to_byte_arr(np_img)
     print(f'>>> Sending prediction results back')
-    #return Response(response=img_encoded,status=200,mimetype='image/jpeg')
+    # return Response(response=img_encoded,status=200,mimetype='image/jpeg')
     result = str(base64.b64encode(img_encoded))[2:-1]
     return render_template("result.html", pred_image=quote(result.rstrip('\n')))
 

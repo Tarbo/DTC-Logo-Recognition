@@ -32,7 +32,7 @@ def measure_similarity(feature_array):
     """Compare the image feature with the logo bank"""
     print(f'>>> Entered the similarity function...', end='')
     try:
-        logo_feature_path = os.path.abspath('code/yolo_v4/logo_bank.json')
+        logo_feature_path = os.path.abspath('src/yolo_v4/logo_bank.json')
         # get available logo names before comparison
         with open(logo_feature_path, 'r') as logo_bank:
             stored_logos = json.load(logo_bank)
@@ -66,14 +66,15 @@ def match_brand(img):
     for brand in logo_names:
         result[brand] = similarity[index]
         index += 1
+    result['Predicted Brand'] = matched_brand
     print(f'>>> Exiting')
-    return matched_brand, confidence, result
+    return result
 
 
 def add_to_logo_bank(logos_images):
     """Add the logos to logo bank"""
     print(f'>>> Entered the add to logo bank function...', end='')
-    img_folder = os.path.join(os.getcwd(), 'code/static/assets/img')
+    img_folder = os.path.join(os.getcwd(), 'src/static/assets/img')
     img_names = list(logos_images.values())
     brand_names = list(logos_images.keys())
     features = []
@@ -85,7 +86,7 @@ def add_to_logo_bank(logos_images):
     logo_dic = {key: value.tolist()
                 for key, value in zip(brand_names, features)}
     try:
-        logo_bank_path = os.path.abspath('code/yolo_v4/logo_bank.json')
+        logo_bank_path = os.path.abspath('src/yolo_v4/logo_bank.json')
         with open(logo_bank_path, 'w') as logo_bank:
             json.dump(logo_dic, logo_bank, indent=4)
     except Exception as identifier:
@@ -96,10 +97,9 @@ def add_to_logo_bank(logos_images):
 if __name__ == '__main__':
     logo_images = {'Nike': 'nike_logo.jpg',
                    'Razer Inc': 'razer_logo.jpg'}
-    #add_to_logo_bank(logo_images)
-    img_path='C:/Users/melli/OneDrive/insight/code/static/assets/img/nike_shoe.jpg'
-    brand, confidence, results = match_brand(img_path)
-    print(f'Predicted Brand: {brand}\t Confidence: {confidence}')
+    # add_to_logo_bank(logo_images)
+    img_path = 'C:/Users/melli/OneDrive/insight/src/static/assets/img/nike_shoe.jpg'
+    results = match_brand(img_path)
     for key, value in results.items():
         print(f'|{key} |{value}|')
-        print('..................')
+        print('............................')
