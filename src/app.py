@@ -1,7 +1,7 @@
 import cv2 as cv
 import os
 import shutil
-#import feature_extractor
+import feature_extractor
 import argparse
 import numpy as np
 import time
@@ -39,8 +39,9 @@ def img_to_byte_arr(image: Image):
 
 def save_boxes(image, boxes):
     """ Save the bounding boxes ROI as separate images for feature extraction"""
+    print(f'>>> Entered the save boxes function to crop out the logos...', end='')
     count = 0
-    print(f'>>> Image Shape: {image.shape}\nBox Values: {boxes}')
+    #print(f'>>> Image Shape: {image.shape}\nBox Values: {boxes}')
     folder_name = os.path.join(
         os.getcwd(), 'src/static/assets/img/saved_boxes')
     if os.path.exists(folder_name):
@@ -62,7 +63,7 @@ def save_boxes(image, boxes):
         # cv.imshow('logo',roi)
         # cv.waitKey()
         count += 1
-        #print(f'>>> Logo: {img_name} successfully written')
+        print(f'>>> Logo: {img_name} successfully written')
     return
 
 
@@ -100,15 +101,12 @@ def detector(frame, args=args):
                    cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
     return frame, logo_detected, boxes
 
-
     #cv.imshow('Image', frame)
     # cv.waitKey()
 # lets initialize our flask app
-UPLOAD_FOLDER = 'static/assets/img'
+
+
 app = Flask(__name__)
-app.secret_key = "tarbo"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 
 @app.route('/detect', methods=['POST', 'GET'])
@@ -125,19 +123,17 @@ def detect():
     pred_img, decision, boxes = detector(image)
     # ife we detected boxes, perform box cropping and feature extraction
     if decision:
-        save_boxes(image2, boxes)
-    # print(f'>>> Handing over to feature extraction and classification')
-    # if decision:
-    #     result = feature_extractor.match_brand(image)
-    # else:
-    #     result['Predicted brand'] = 'No matching Brand found'
+        save_boxes(image2, boxes)  # crop the bounded boxes out into new images
+        brand_result = feature_extractor.match_brand()
+    else:
+        brand_result = {'Predicted Brand': 'None'}
     image = cv.cvtColor(pred_img, cv.COLOR_BGR2RGB)
     np_img = Image.fromarray(image)
     img_encoded = img_to_byte_arr(np_img)
     print(f'>>> Sending prediction results back')
     # return Response(response=img_encoded,status=200,mimetype='image/jpeg')
     result = str(base64.b64encode(img_encoded))[2:-1]
-    return render_template("result.html", pred_image=quote(result.rstrip('\n')))
+    return render_template("result.html", pred_image=quote(result.rstrip('\n')),brand=brand_result)
 
 
 @app.route('/')

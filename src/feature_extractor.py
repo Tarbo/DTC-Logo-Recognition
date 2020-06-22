@@ -50,24 +50,26 @@ def measure_similarity(feature_array):
     return similarity_matrix[0], logo_names
 
 
-def match_brand(img):
+def match_brand():
     """ Return the name of the brand with most similarity and similarity score"""
     print(f'>>> Entered the match brand function...', end='')
-    feature_arr = extract_features(img).tolist()
-    similarity, logo_names = measure_similarity(feature_arr)
-    # remove the first value cos its self comparison
-    similarity = similarity[1:]
-    max_id = np.argmax(similarity)
-    matched_brand = logo_names[max_id]
-    confidence = similarity[max_id]
+    img_folder = os.path.join(os.getcwd(), 'src/static/assets/img/saved_boxes')
+    brand_list = []
+    confidence_list = []
+    for img_file in os.listdir(img_folder):
+        img_path = os.path.join(img_folder, img_file)
+        feature_arr = extract_features(img_path).tolist()
+        similarity, logo_names = measure_similarity(feature_arr)
+        # remove the first value cos its self comparison
+        similarity = similarity[1:]
+        max_id = np.argmax(similarity)
+        brand_list.append(logo_names[max_id])
+        confidence_list.append(similarity[max_id])
     # build a dictionary for use as table in the html
-    index = 0
-    result = {}
-    for brand in logo_names:
-        result[brand] = similarity[index]
-        index += 1
-    result['Predicted Brand'] = matched_brand
-    print(f'>>> Exiting')
+    confidence_id = np.argmax(np.asarray(confidence_list))
+    result = {'Predicted Brand: ': brand_list[confidence_id],
+              'Confidence: ': f'{confidence_list[confidence_id]:.3f}'}
+    print(f'>>> Exiting ')
     return result
 
 
@@ -94,12 +96,12 @@ def add_to_logo_bank(logos_images):
     print(f'Exiting the add to logo bank function')
 
 
-if __name__ == '__main__':
-    logo_images = {'Nike': 'nike_logo.jpg',
-                   'Razer Inc': 'razer_logo.jpg'}
-    # add_to_logo_bank(logo_images)
-    img_path = 'C:/Users/melli/OneDrive/insight/src/static/assets/img/nike_shoe.jpg'
-    results = match_brand(img_path)
-    for key, value in results.items():
-        print(f'|{key} |{value}|')
-        print('............................')
+# if __name__ == '__main__':
+#     logo_images = {'Nike': 'nike_logo.jpg',
+#                    'Razer Inc': 'razer_logo.jpg'}
+#     # add_to_logo_bank(logo_images)
+#     img_path = 'C:/Users/melli/OneDrive/insight/src/static/assets/img/nike_shoe.jpg'
+#     results = match_brand(img_path)
+#     for key, value in results.items():
+#         print(f'|{key} |{value}|')
+#         print('............................')

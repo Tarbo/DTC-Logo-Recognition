@@ -232,8 +232,22 @@
 
             <div class="col-md container-fluid">
                <div class="row justify-content-center">
-                  <h3><span style="font-family: 'Lucida Handwriting';font-style: italic;">Logo IDing</span> Results</h3>
+                  <!--<h3><span style="font-family: 'Lucida Handwriting';font-style: italic;">Logo IDing</span> Results</h3>-->
                   <img src="data:image/png;base64,{{ pred_image }}" alt="Predicted logos">
+               </div>
+               <div class="row justify-content-center">
+                  <table>
+                  {% for key, value in brand.items() %}
+                  <tr>
+                     <th>
+                        <h3>{{key}}</h3>
+                     </th>
+                     <td>
+                        <h4>{{value}}</h4>
+                     </td>
+                  </tr>
+                  {% endfor %}
+                  </table>
                </div>
             </div>
          </main>
