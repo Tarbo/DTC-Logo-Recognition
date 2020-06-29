@@ -100,7 +100,7 @@ celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
-
+.vscode/
 # Environments
 .env
 .venv
@@ -138,3 +138,4 @@ data/products/
 src/yolo_v4/
 data/products_url.csv
 resources/
+practice/

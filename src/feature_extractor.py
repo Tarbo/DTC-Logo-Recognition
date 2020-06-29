@@ -1,4 +1,5 @@
 from tensorflow.keras.applications.nasnet import NASNetLarge, preprocess_input
+#from tensorflow.keras.applications.inception_resnet_v2 import InceptionResNetV2, preprocess_input
 from tensorflow.keras.preprocessing import image
 import numpy as np
 import json
@@ -13,6 +14,8 @@ nas_model = NASNetLarge(
     input_tensor=None,
     pooling='max',
 )
+# inc_res_model = InceptionResNetV2(
+#     input_shape=None, include_top=False, weights="imagenet", input_tensor=None, pooling='max')
 
 
 def extract_features(img):
@@ -20,6 +23,7 @@ def extract_features(img):
     print(f'>>> Entered feature extractor...', end='')
     start = time.time()
     img = image.load_img(img, target_size=(331, 331))
+    # img = image.load_img(img, target_size=(299, 299))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
@@ -75,7 +79,7 @@ def match_brand():
 
 def add_to_logo_bank(logos_images):
     """Add the logos to logo bank"""
-    print(f'>>> Entered the add to logo bank function...', end='')
+    print(f'>>> Entered the add to logo bank function...')
     img_folder = os.path.join(os.getcwd(), 'src/static/assets/img')
     img_names = list(logos_images.values())
     brand_names = list(logos_images.keys())
@@ -93,15 +97,17 @@ def add_to_logo_bank(logos_images):
             json.dump(logo_dic, logo_bank, indent=4)
     except Exception as identifier:
         print(f'>>> Exception: {identifier}')
-    print(f'Exiting the add to logo bank function')
+    print(f'Exiting the add-to-logo-bank function')
 
 
 # if __name__ == '__main__':
 #     logo_images = {'Nike': 'nike_logo.jpg',
-#                    'Razer Inc': 'razer_logo.jpg'}
-#     # add_to_logo_bank(logo_images)
-#     img_path = 'C:/Users/melli/OneDrive/insight/src/static/assets/img/nike_shoe.jpg'
-#     results = match_brand(img_path)
-#     for key, value in results.items():
-#         print(f'|{key} |{value}|')
-#         print('............................')
+#                    'Razer Inc': 'razer_logo.jpg',
+#                    'Nike Text-Symbol': 'nike_symbol_text.jpg',
+#                    'Converse':'converse_logo.jpg'}
+#     add_to_logo_bank(logo_images)
+    # img_path = 'C:/Users/melli/OneDrive/insight/src/static/assets/img/nike_shoe.jpg'
+    # results = match_brand(img_path)
+    # for key, value in results.items():
+    #     print(f'|{key} |{value}|')
+    #     print('............................')

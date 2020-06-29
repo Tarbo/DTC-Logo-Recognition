@@ -126,7 +126,7 @@ def detect():
         save_boxes(image2, boxes)  # crop the bounded boxes out into new images
         brand_result = feature_extractor.match_brand()
     else:
-        brand_result = {'Predicted Brand': 'None'}
+        brand_result = {'Predicted Brand: ': 'None'}
     image = cv.cvtColor(pred_img, cv.COLOR_BGR2RGB)
     np_img = Image.fromarray(image)
     img_encoded = img_to_byte_arr(np_img)
