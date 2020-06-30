@@ -135,7 +135,7 @@ data/LogosInTheWild-V2/
 data/litw_annotations/
 data/0samples/
 data/products/
-src/yolo_v4/
+src/yolo_v4/*.weights
 data/products_url.csv
 resources/
 practice/
